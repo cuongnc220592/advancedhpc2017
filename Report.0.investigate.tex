@@ -1,0 +1,41 @@
+\documentclass[12pt]{article}
+ \usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+ \usepackage{graphicx}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+ 
+\newenvironment{problem}[2][Problem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+
+ 
+\begin{document}
+ 
+%\renewcommand{\qedsymbol}{\filledbox}
+%Good resources for looking up how to do stuff:
+%Binary operators: http://www.access2science.com/latex/Binary.html
+%General help: http://en.wikibooks.org/wiki/LaTeX/Mathematics
+%Or just google stuff
+ 
+\title{Report 0}
+\author{CuongNC}
+\maketitle
+ 
+\section{How to complie the labwork project}
+
+To complie the project, we need to install the environment such as tools compliers. Firstly, we download and install CUDA SDK. Senconly, we also install nvcc or gcc. This project required libjpeg.
+
+\section{Command and output to complie}
+\begin{itemize}
+  \item Make the CMakeLists.txt file with the command: \texttt{make CMakeLists.txt}
+  
+  \item make -j
+  \item \texttt{./labwork}
+  \item Output 
+  \begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{image}
+\caption{\label{fig:conv}Result}
+\end{figure}
+\end{itemize}
+\end{document}
