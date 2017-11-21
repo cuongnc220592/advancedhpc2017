@@ -1,0 +1,77 @@
+\documentclass{article}
+    \usepackage[margin=0.7in]{geometry}
+    \usepackage[parfill]{parskip}
+    \usepackage[utf8]{inputenc}
+    
+    % Related to math
+    \usepackage{amsmath,amssymb,amsfonts,amsthm}
+    \usepackage{listings}
+
+\begin{document}
+
+CuongNC
+
+\section{Labwork- labwork2\_GPU}
+\subsection{The result}
+
+\begin{lstlisting}
+Device Number: 0
+Name:  GeForce GTX 1080
+  GPU Clock Speed:                               1.84 GHz
+Core numbers:  2560
+Multiprocessor count:  20
+ Wrap size: 32
+  Memory Clock Rate (KHz): 5005000
+  Memory Bus Width (bits): 256
+  Peak Memory Bandwidth (GB/s): 320.320000
+
+
+Device Number: 1
+Name:  GeForce GTX TITAN Black
+  GPU Clock Speed:                               0.98 GHz
+Core numbers:  2880
+Multiprocessor count:  15
+ Wrap size: 32
+  Memory Clock Rate (KHz): 3500000
+  Memory Bus Width (bits): 384
+  Peak Memory Bandwidth (GB/s): 336.000000
+
+Device Number: 2
+Name:  GeForce GTX TITAN Black
+  GPU Clock Speed:                               0.98 GHz
+Core numbers:  2880
+Multiprocessor count:  15
+ Wrap size: 32
+  Memory Clock Rate (KHz): 3500000
+  Memory Bus Width (bits): 384
+  Peak Memory Bandwidth (GB/s): 336.000000
+
+\end{lstlisting}
+
+
+\subsection{The code}
+\begin{lstlisting}
+void Labwork::labwork2_GPU() {
+int nDevices;
+cudaGetDeviceCount(&nDevices);
+for (int i = 0; i < nDevices; i++)
+{
+    cudaDeviceProp prop;
+
+    cudaGetDeviceProperties(&prop, i);
+            printf("Device Number: %d\n", i);
+    printf("Name:  %s\n", prop.name );
+    printf("  GPU Clock Speed:                               %.2f GHz\n", prop.clockRat$
+    printf( "Core numbers:  %d\n",getSPcores(prop));
+    printf( "Multiprocessor count:  %d\n",prop.multiProcessorCount );
+    printf(" Wrap size: %d\n", prop.warpSize);
+    printf("  Memory Clock Rate (KHz): %d\n",
+           prop.memoryClockRate);
+    printf("  Memory Bus Width (bits): %d\n",
+           prop.memoryBusWidth);
+    printf("  Peak Memory Bandwidth (GB/s): %f\n\n",
+           2.0*prop.memoryClockRate*(prop.memoryBusWidth/8)/1.0e6);
+}
+}
+\end{lstlisting}
+\end{document}
