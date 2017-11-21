@@ -99,9 +99,21 @@ void Labwork::labwork1_CPU() {
         }
     }
 }
-
 void Labwork::labwork1_OpenMP() {
-
+    int pixelCount = inputImage->width * inputImage->height;
+    outputImage = static_cast<char *>(malloc(pixelCount * 3));
+    omp_set_num_threads(16);   
+    printf("%d\n", omp_get_num_threads( )); 
+    printf("%d\n", omp_get_max_threads( ));
+    #pragma omp parallel for
+    for (int j = 0; j < 100; j++) {		// let's do it 100 times, otherwise it's too fast!
+        for (int i = 0; i < pixelCount; i++) {
+            outputImage[i * 3] = (char) (((int) inputImage->buffer[i * 3] + (int) inputImage->buffer[i * 3 + 1] +
+                                          (int) inputImage->buffer[i * 3 + 2]) / 3);
+            outputImage[i * 3 + 1] = outputImage[i * 3];
+            outputImage[i * 3 + 2] = outputImage[i * 3];
+        }
+    }
 }
 
 int getSPcores(cudaDeviceProp devProp) {
@@ -130,8 +142,49 @@ int getSPcores(cudaDeviceProp devProp) {
     return cores;
 }
 
+int convertSMVer2Cores(int major, int minor)
+    {
+        // Defines for GPU Architecture types (using the SM version to determine the # of cores per SM
+        typedef struct {
+            int SM; // 0xMm (hexidecimal notation), M = SM Major version, and m = SM minor version
+            int Cores;
+        } SMtoCores;
+
+        SMtoCores gpuArchCoresPerSM[] =  { { 0x10,  8 }, { 0x11,  8 }, { 0x12,  8 }, { 0x13,  8 }, { 0x20, 32 }, { 0x21, 48 }, {0x30, 192}, {0x35, 192}, {0x50, 128}, {0x52, 128}, { -1, -1 }  };
+
+        int index = 0;
+        while (gpuArchCoresPerSM[index].SM != -1) 
+        {
+            if (gpuArchCoresPerSM[index].SM == ((major << 4) + minor) ) 
+                return gpuArchCoresPerSM[index].Cores;
+            index++;
+        }
+        printf("\nCan't determine number of cores. Unknown SM version %d.%d!\n", major, minor);
+        return 0;
+    }
+
 void Labwork::labwork2_GPU() {
-    
+int nDevices;
+cudaGetDeviceCount(&nDevices);
+for (int i = 0; i < nDevices; i++)
+{
+    cudaDeviceProp prop;
+    int sm_cores = convertSMVer2Cores(prop.major, prop.minor);
+    cudaGetDeviceProperties(&prop, i);
+	    printf("Device Number: %d\n", i);
+    printf("Name:  %s\n", prop.name );
+    printf("  GPU Clock Speed:                               %.2f GHz\n", prop.clockRate * 1e-6f);
+    //printf("  (%2d) Multiprocessors x (%2d) CUDA Cores/MP:     %d CUDA Cores\n", prop.multiProcessorCount, sm_cores, sm_cores * prop.multiProcessorCount);
+    printf( "Core numbers:  %d\n",getSPcores(prop));
+    printf( "Multiprocessor count:  %d\n",prop.multiProcessorCount );
+    printf(" Wrap size: %d\n", prop.warpSize);
+    printf("  Memory Clock Rate (KHz): %d\n",
+           prop.memoryClockRate);
+    printf("  Memory Bus Width (bits): %d\n",
+           prop.memoryBusWidth);
+    printf("  Peak Memory Bandwidth (GB/s): %f\n\n",
+           2.0*prop.memoryClockRate*(prop.memoryBusWidth/8)/1.0e6);
+}    
 }
 
 void Labwork::labwork3_GPU() {
